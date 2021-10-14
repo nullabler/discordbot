@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/unixoff/discord-bot/discord"
 )
 
 // Variables used for command line parameters
@@ -60,13 +62,33 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
-	// If the message is "ping" reply with "Pong!"
-	if m.Content == "ping" {
-		s.ChannelMessageSend(m.ChannelID, "Pong!")
+
+
+	if !strings.HasPrefix(m.Content, "!") {
+		return
 	}
 
-	// If the message is "pong" reply with "Ping!"
-	if m.Content == "pong" {
+	args := strings.Split(m.Content[1:], " ")
+
+	switch args[0] {
+	case "ping":
+		s.ChannelMessageSend(m.ChannelID, "Pong!")
+	case "pong":
 		s.ChannelMessageSend(m.ChannelID, "Ping!")
+	case "help":
+		s.ChannelMessageSend(m.ChannelID, "This is help")
+
+		discord.helpCommandHandler(s, m, "")
+		// if len(args) > 1 {
+			// helpCommandHandler(s, m, args[1])
+		// } else { // Help command without topic
+			// helpCommandHandler(s, m, "")
+		// }
+	default:
+		s.ChannelMessageSend(m.ChannelID, errorMessage("Invalid command", "For a list of help topics, type !help"))
 	}
+}
+
+func errorMessage(title string, message string) string {
+	return "❌  **" + title + "**\n" + message
 }
