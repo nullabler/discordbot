@@ -10,4 +10,3 @@ services:
       - './app:/app'
     environment:
       TOKEN: ${TOKEN}
-    command: ["/app/main", "-t", "$TOKEN"]

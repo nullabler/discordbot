@@ -1,7 +1,9 @@
 FROM golang:1.17.2-alpine3.14
 
-RUN mkdir /app
-ADD app /app
-
 WORKDIR /app
-RUN go build -o main .
+COPY app/ /app
+
+RUN go mod download
+RUN go get github.com/githubnemo/CompileDaemon
+
+ENTRYPOINT CompileDaemon --build="go build -o main ." --command="./main -t $TOKEN"
