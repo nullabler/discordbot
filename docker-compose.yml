@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    working_dir: /app
+    volumes:
+      - './app:/app'
+    environment:
+      TOKEN: ${TOKEN}
+    command: ["/app/main", "-t", "$TOKEN"]
