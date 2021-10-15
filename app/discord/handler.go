@@ -7,11 +7,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-var (
-	RoleList []string
-)
-
-func SlashCommandHandlerfunc(s *discordgo.Session, m *discordgo.MessageCreate) {
+func SlashCommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Ignore all messages created by the bot itself
 	// This isn't required in this specific example but it's a good practice.
 	if m.Author.ID == s.State.User.ID {
@@ -45,17 +41,15 @@ func SlashCommandHandlerfunc(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 }
 
-func isAccess(memberRoleList []string) bool {
-	if len(RoleList) == 0 {
-		RoleList =  strings.Split(os.Getenv("ROLE_LIST"), ":")
+func MessageHandler(s * discordgo.Session, m *discordgo.MessageCreate) {
+	if m.Author.ID == s.State.User.ID {
+		return
 	}
 
-	for _, memberRole := range memberRoleList {
-		for _, role := range RoleList {
-			if memberRole == role {
-				return true
-			}
-		}
+	switch strings.ToLower(m.Content) {
+	case "привет", "всем привет", "hi", "hello":
+		s.MessageReactionAdd(m.ChannelID, m.ID, "✌")
+	case "спасибо", "спасибо за помощь", "спс":
+		s.MessageReactionAdd(m.ChannelID, m.ID, "👍")
 	}
-	return false
 }

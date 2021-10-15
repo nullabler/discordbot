@@ -29,7 +29,8 @@ func main() {
 	}
 
 	// Register the messageCreate func as a callback for MessageCreate events.
-	dg.AddHandler(discord.SlashCommandHandlerfunc)
+	dg.AddHandler(discord.SlashCommandHandler)
+	dg.AddHandler(discord.MessageHandler)
 
 	// In this example, we only care about receiving message events.
 	dg.Identify.Intents = discordgo.IntentsGuildMessages
