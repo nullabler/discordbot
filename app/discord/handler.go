@@ -1,6 +1,8 @@
 package discord
 
 import (
+	"fmt"
+	"strings"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -11,6 +13,7 @@ func SlashCommandHandlerfunc(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
+	fmt.Println(m.Author)
 
 	if !strings.HasPrefix(m.Content, "!") {
 		return

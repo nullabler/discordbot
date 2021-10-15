@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
@@ -29,6 +28,7 @@ func main() {
 		fmt.Println("error creating Discord session,", err)
 		return
 	}
+
 
 	// Register the messageCreate func as a callback for MessageCreate events.
 	dg.AddHandler(discord.SlashCommandHandlerfunc)
