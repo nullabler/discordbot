@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"os/signal"
@@ -14,21 +13,20 @@ import (
 // Variables used for command line parameters
 var (
 	Token string
+	RoleList []string
 )
 
-func init() {
-	flag.StringVar(&Token, "t", "", "Bot Token")
-	flag.Parse()
+type State struct{
+	RoleList []string
 }
 
 func main() {
 	// Create a new Discord session using the provided bot token.
-	dg, err := discordgo.New("Bot " + Token)
+	dg, err := discordgo.New("Bot " + os.Getenv("TOKEN"))
 	if err != nil {
 		fmt.Println("error creating Discord session,", err)
 		return
 	}
-
 
 	// Register the messageCreate func as a callback for MessageCreate events.
 	dg.AddHandler(discord.SlashCommandHandlerfunc)

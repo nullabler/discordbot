@@ -1,9 +1,14 @@
 package discord
 
 import (
-	"fmt"
+	"os"
 	"strings"
+
 	"github.com/bwmarrin/discordgo"
+)
+
+var (
+	RoleList []string
 )
 
 func SlashCommandHandlerfunc(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -13,9 +18,12 @@ func SlashCommandHandlerfunc(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	fmt.Println(m.Author)
+	if !strings.HasPrefix(m.Content, os.Getenv("TRIGGER")) {
+		return
+	}
 
-	if !strings.HasPrefix(m.Content, "!") {
+	if !isAccess(m.Member.Roles) {
+		s.ChannelMessageSend(m.ChannelID, errorMessage("Error", "Permission denied"))
 		return
 	}
 
@@ -27,11 +35,9 @@ func SlashCommandHandlerfunc(s *discordgo.Session, m *discordgo.MessageCreate) {
 	case "pong":
 		s.ChannelMessageSend(m.ChannelID, "Ping!")
 	case "help":
-		// s.ChannelMessageSend(m.ChannelID, "This is help")
-
 		if len(args) > 1 {
 			helpCommand(s, m, args[1])
-		} else { // Help command without topic
+		} else {
 			helpCommand(s, m, "")
 		}
 	default:
@@ -39,6 +45,17 @@ func SlashCommandHandlerfunc(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 }
 
-func errorMessage(title string, message string) string {
-	return "❌  **" + title + "**\n" + message
+func isAccess(memberRoleList []string) bool {
+	if len(RoleList) == 0 {
+		RoleList =  strings.Split(os.Getenv("ROLE_LIST"), ":")
+	}
+
+	for _, memberRole := range memberRoleList {
+		for _, role := range RoleList {
+			if memberRole == role {
+				return true
+			}
+		}
+	}
+	return false
 }

@@ -10,3 +10,5 @@ services:
       - './app:/app'
     environment:
       TOKEN: ${TOKEN}
+      ROLE_LIST: ${ROLE_LIST}
+      TRIGGER: ${TRIGGER}
