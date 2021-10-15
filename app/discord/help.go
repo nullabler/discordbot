@@ -1,4 +1,4 @@
-package discord
+package handler
 
 import "github.com/bwmarrin/discordgo"
 
@@ -28,7 +28,7 @@ const (
 	c_DARK_VIVID_PINK     = 12320855
 )
 
-func helpCommandHandler(s *discordgo.Session, m *discordgo.MessageCreate, topic string) {
+func helpCommand(s *discordgo.Session, m *discordgo.MessageCreate, topic string) {
 	var title string
 	var description string
 	var fields []*discordgo.MessageEmbedField

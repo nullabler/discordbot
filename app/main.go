@@ -31,7 +31,7 @@ func main() {
 	}
 
 	// Register the messageCreate func as a callback for MessageCreate events.
-	dg.AddHandler(messageCreate)
+	dg.AddHandler(discord.SlashCommandHandlerfunc)
 
 	// In this example, we only care about receiving message events.
 	dg.Identify.Intents = discordgo.IntentsGuildMessages
@@ -51,44 +51,4 @@ func main() {
 
 	// Cleanly close down the Discord session.
 	dg.Close()
-}
-
-// This function will be called (due to AddHandler above) every time a new
-// message is created on any channel that the authenticated bot has access to.
-func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-
-	// Ignore all messages created by the bot itself
-	// This isn't required in this specific example but it's a good practice.
-	if m.Author.ID == s.State.User.ID {
-		return
-	}
-
-
-	if !strings.HasPrefix(m.Content, "!") {
-		return
-	}
-
-	args := strings.Split(m.Content[1:], " ")
-
-	switch args[0] {
-	case "ping":
-		s.ChannelMessageSend(m.ChannelID, "Pong!")
-	case "pong":
-		s.ChannelMessageSend(m.ChannelID, "Ping!")
-	case "help":
-		s.ChannelMessageSend(m.ChannelID, "This is help")
-
-		discord.helpCommandHandler(s, m, "")
-		// if len(args) > 1 {
-			// helpCommandHandler(s, m, args[1])
-		// } else { // Help command without topic
-			// helpCommandHandler(s, m, "")
-		// }
-	default:
-		s.ChannelMessageSend(m.ChannelID, errorMessage("Invalid command", "For a list of help topics, type !help"))
-	}
-}
-
-func errorMessage(title string, message string) string {
-	return "❌  **" + title + "**\n" + message
 }
