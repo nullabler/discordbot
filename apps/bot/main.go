@@ -31,9 +31,10 @@ func main() {
 	// Register the messageCreate func as a callback for MessageCreate events.
 	dg.AddHandler(discord.SlashCommandHandler)
 	dg.AddHandler(discord.MessageHandler)
+	// dg.AddHandler(test)
 
 	// In this example, we only care about receiving message events.
-	dg.Identify.Intents = discordgo.IntentsGuildMessages
+	// dg.Identify.Intents = discordgo.IntentsGuildMessages
 
 	// Open a websocket connection to Discord and begin listening.
 	err = dg.Open()
@@ -41,6 +42,13 @@ func main() {
 		fmt.Println("error opening connection,", err)
 		return
 	}
+
+	_, err = dg.User("@me")
+	if err != nil {
+		// Login unsuccessful
+		fmt.Println("FATA:", err)
+		return
+	} // Login successful
 
 	// Wait here until CTRL-C or other term signal is received.
 	fmt.Println("Bot is now running.  Press CTRL-C to exit.")

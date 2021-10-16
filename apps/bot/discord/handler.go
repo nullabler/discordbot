@@ -5,21 +5,22 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/unixoff/discord-bot/music"
 )
 
+func setVar(s *discordgo.Session, m *discordgo.MessageCreate) {
+	session, message = s, m
+
+}
+
 func SlashCommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
-	// Ignore all messages created by the bot itself
-	// This isn't required in this specific example but it's a good practice.
-	if m.Author.ID == s.State.User.ID {
+	setVar(s, m)
+	if m.Author.ID == s.State.User.ID || !strings.HasPrefix(m.Content, os.Getenv("TRIGGER")) || !isAccess() {
 		return
 	}
 
-	if !strings.HasPrefix(m.Content, os.Getenv("TRIGGER")) {
-		return
-	}
-
-	if !isAccess(m.Member.Roles) {
-		s.ChannelMessageSend(m.ChannelID, errorMessage("Error", "Permission denied"))
+	if !isAccess() {
+		permissionDeniedMessage()
 		return
 	}
 
@@ -30,6 +31,18 @@ func SlashCommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		s.ChannelMessageSend(m.ChannelID, "Pong!")
 	case "pong":
 		s.ChannelMessageSend(m.ChannelID, "Ping!")
+	case "play":
+		if !isAccessForMusic(os.Getenv("MUSIC_CHANNEL")) || len(args) != 2 {
+			permissionDeniedMessage()
+			return
+		}
+		music.PlayCommand(s, m, args[1])
+	case "disconnect":
+		if !isAccessForMusic(os.Getenv("MUSIC_CHANNEL")) {
+			permissionDeniedMessage()
+			return
+		}
+		music.DisconnectCommand(s, m)
 	case "help":
 		if len(args) > 1 {
 			helpCommand(s, m, args[1])

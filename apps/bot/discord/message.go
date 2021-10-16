@@ -33,3 +33,7 @@ func errorMessage(title string, message string) string {
 func successMessage(title string, message string) string {
 	return "✅  **" + title + "**\n" + message
 }
+
+func permissionDeniedMessage() {
+	session.ChannelMessageSend(message.ChannelID, errorMessage("Error", "Permission denied"))
+}

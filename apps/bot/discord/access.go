@@ -1,25 +1,38 @@
 package discord
 
 import (
-	"strings"
 	"os"
+	"strings"
 )
+
+const SEPARATION = ":"
 
 var (
 	RoleList []string
 )
 
-func isAccess(memberRoleList []string) bool {
+func init() {
 	if len(RoleList) == 0 {
-		RoleList =  strings.Split(os.Getenv("ROLE_LIST"), ":")
+		RoleList = strings.Split(os.Getenv("ROLE_LIST"), SEPARATION)
 	}
+}
 
-	for _, memberRole := range memberRoleList {
+func isAccess() bool {
+	for _, memberRole := range message.Member.Roles {
 		for _, role := range RoleList {
 			if memberRole == role {
 				return true
 			}
 		}
 	}
+
 	return false
+}
+
+func isAccessForMusic(channelID string) bool {
+	if channelID != "" && channelID != message.ChannelID{
+		return false
+	}
+
+	return isAccess()
 }

@@ -11,6 +11,7 @@ services:
     environment:
       TOKEN: ${TOKEN}
       ROLE_LIST: ${ROLE_LIST}
+      MUSIC_CHANNEL: ${MUSIC_CHANNEL}
       TRIGGER: ${TRIGGER}
     depends_on:
       - mongo
