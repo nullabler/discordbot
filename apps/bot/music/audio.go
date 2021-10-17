@@ -72,10 +72,6 @@ func GlobalRadio(radioSig chan PkgRadio) {
 	}
 }
 
-func (v *VoiceInstance) PlayNow(song Song) {
-
-}
-
 func (v *VoiceInstance) PlayQueue(song Song) {
 	// add song to queue
 	v.QueueAdd(song)

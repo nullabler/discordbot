@@ -1,5 +1,44 @@
 package music
 
+import (
+	"log"
+
+	"github.com/kkdai/youtube/v2"
+)
+
+func youtubeFind(search string, v *VoiceInstance) (pkgSong PkgSong, err error) {
+	client := youtube.Client{}
+	song := Song{
+		ChannelID: message.ChannelID,
+		User: message.Author.ID,
+	}
+
+	video, err := client.GetVideo(search)
+	if err != nil {
+		log.Println("Fatal: Youtube get video", err)
+		return
+	}
+
+	formats := video.Formats.WithAudioChannels()
+	streamURL, err := client.GetStreamURL(video, &formats[0])
+	if err != nil {
+		log.Println("Fatal: Youtube get stream URL", err)
+		return
+	}
+
+	song.ID = video.Author
+	song.VideoURL = streamURL
+	song.VidID = video.ID
+	song.Title = video.Title
+	song.Duration = video.Duration.String()
+	pkgSong = PkgSong{
+		data: song,
+		v: v,
+	}
+
+	return
+}
+
 // import (
 // 	"fmt"
 // 	"github.com/bwmarrin/discordgo"
