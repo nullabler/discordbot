@@ -8,6 +8,13 @@ import (
 
 var o = &Options{}
 
+func InitRoutine() {
+	songSignal = make(chan PkgSong)
+	// radioSignal = make(chan PkgRadio)
+	go GlobalPlay(songSignal)
+	// go GlobalRadio(radioSignal)
+}
+
 func SearchGuild(textChannelID string) (guildID string) {
 	channel, _ := session.Channel(textChannelID)
 	guildID = channel.GuildID

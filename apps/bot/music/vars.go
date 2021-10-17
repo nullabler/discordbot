@@ -8,7 +8,7 @@ import (
 var (
 	session        *discordgo.Session
 	message		   *discordgo.MessageCreate
-	voice		   *discordgo.VoiceConnection
+	// voice		   *discordgo.VoiceConnection
 
 	voiceInstances = map[string]*VoiceInstance{}
 	purgeTime      int64

@@ -8,6 +8,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/unixoff/discord-bot/discord"
+	"github.com/unixoff/discord-bot/music"
 )
 
 // Variables used for command line parameters
@@ -52,6 +53,7 @@ func main() {
 
 	// Wait here until CTRL-C or other term signal is received.
 	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
+	music.InitRoutine()
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
