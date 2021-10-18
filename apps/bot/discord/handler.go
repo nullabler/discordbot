@@ -19,30 +19,20 @@ func SlashCommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	if !isAccess() {
-		permissionDeniedMessage()
-		return
-	}
-
 	args := strings.Split(m.Content[1:], " ")
-
 	switch args[0] {
-	case "ping":
-		s.ChannelMessageSend(m.ChannelID, "Pong!")
-	case "pong":
-		s.ChannelMessageSend(m.ChannelID, "Ping!")
-	case "play":
-		if !isAccessForMusic(os.Getenv("MUSIC_CHANNEL")) || len(args) != 2 {
+	case "ping", "pong":
+		content := "Ping!"
+		if args[0] == "ping" {
+			content = "Pong!"
+		}
+		s.ChannelMessageSend(m.ChannelID, content)
+	case "play", "disconnect", "join":
+		if !isAccessForMusic() {
 			permissionDeniedMessage()
 			return
 		}
-		music.PlayCommand(s, m, args[1])
-	case "disconnect":
-		if !isAccessForMusic(os.Getenv("MUSIC_CHANNEL")) {
-			permissionDeniedMessage()
-			return
-		}
-		music.DisconnectCommand(s, m)
+		music.Handler(s, m, args)
 	case "help":
 		if len(args) > 1 {
 			helpCommand(s, m, args[1])
@@ -54,7 +44,7 @@ func SlashCommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 }
 
-func MessageHandler(s * discordgo.Session, m *discordgo.MessageCreate) {
+func MessageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
 		return
 	}

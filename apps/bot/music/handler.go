@@ -1,6 +1,7 @@
 package music
 
 import (
+	"log"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -15,6 +16,31 @@ func InitRoutine() {
 	// go GlobalRadio(radioSignal)
 }
 
+func Handler(s *discordgo.Session, m *discordgo.MessageCreate, args []string) {
+	switch args[0] {
+	case "play":
+		if len(args) != 2 {
+			ChMessageSend(m.ChannelID, "Not found URL")
+			return
+		}
+		PlayCommand(s, m, args[1])
+	case "disconnect":
+		DisconnectCommand(s, m)
+	case "join":
+		JoinCommand(s, m)
+	}
+}
+
+func ChVoiceJoin(guildID string, vInstance *VoiceInstance) error {
+	voiceChannelID := SearchVoiceChannel(guildID, message.Author.ID)
+	vConnect, err := session.ChannelVoiceJoin(guildID, voiceChannelID, false, false)
+	if err != nil {
+		log.Println("Error: channel voice join", err)
+		return err
+	}
+	vInstance.voice = vConnect
+	return nil
+}
 func SearchGuild(textChannelID string) (guildID string) {
 	channel, _ := session.Channel(textChannelID)
 	guildID = channel.GuildID

@@ -29,10 +29,10 @@ func isAccess() bool {
 	return false
 }
 
-func isAccessForMusic(channelID string) bool {
-	if channelID != "" && channelID != message.ChannelID{
+func isAccessForMusic() bool {
+	if os.Getenv("MUSIC_CHANNEL") != message.ChannelID{
 		return false
 	}
 
-	return isAccess()
+	return true
 }

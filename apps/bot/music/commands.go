@@ -1,6 +1,8 @@
 package music
 
 import (
+	"time"
+
 	"github.com/bwmarrin/discordgo"
 	// "log"
 	// _"strconv"
@@ -11,22 +13,37 @@ func setVar(s *discordgo.Session, m *discordgo.MessageCreate) {
 	session, message = s, m
 }
 
+func JoinCommand(s *discordgo.Session, m *discordgo.MessageCreate) {
+	setVar(s, m)
+	guildID := SearchGuild(m.ChannelID)
+
+	vInstance := voiceInstances[guildID]
+	if vInstance == nil {
+		mutex.Lock()
+		vInstance = new(VoiceInstance)
+		voiceInstances[guildID] = vInstance
+		vInstance.guildID = guildID
+		vInstance.session = s
+		mutex.Unlock()
+	}
+	ChVoiceJoin(guildID, vInstance)
+}
+
 func PlayCommand(s *discordgo.Session, m *discordgo.MessageCreate, query string) {
 	setVar(s, m)
 	guildID := SearchGuild(m.ChannelID)
-	// voice := voiceInstances[guildID]
+	vInstance := voiceInstances[guildID]
 
-	mutex.Lock()
-	v := new(VoiceInstance)
-	voiceInstances[guildID] = v
-	v.guildID = guildID
-	v.session = s
-	mutex.Unlock()
 
-	voiceChannelID := SearchVoiceChannel(guildID, m.Author.ID)
-	v.voice ,_ = session.ChannelVoiceJoin(guildID, voiceChannelID, false, false)
+	if vInstance == nil {
+		JoinCommand(s, m)
+	} else {
+		if err := ChVoiceJoin(guildID, vInstance); err != nil {
+			return
+		}
+	}
 
-	pkgSong, err := youtubeFind(query, v)
+	pkgSong, err := youtubeFind(query, vInstance)
 	if err != nil {
 		ChMessageSend(m.ChannelID, "[**Music**] youtube error")
 		return
@@ -39,8 +56,19 @@ func PlayCommand(s *discordgo.Session, m *discordgo.MessageCreate, query string)
 
 func DisconnectCommand(s *discordgo.Session, m *discordgo.MessageCreate) {
 	guildID := SearchGuild(m.ChannelID)
-	v := voiceInstances[guildID]
-	v.voice.Disconnect()
+	vInstance := voiceInstances[guildID]
+	if vInstance == nil {
+		return
+	}
+
+	if vInstance.voice.Ready {
+		vInstance.voice.Disconnect()
+	}
+	vInstance.Stop()
+	time.Sleep(200 * time.Millisecond)
+	mutex.Lock()
+	delete(voiceInstances, guildID)
+	mutex.Unlock()
 }
 // func PlayReporter(v *VoiceInstance, m *discordgo.MessageCreate) {
 // 	log.Println("INFO:", m.Author.Username, "send 'play'")
