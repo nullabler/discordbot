@@ -11,23 +11,44 @@ var o = &Options{}
 
 func InitRoutine() {
 	songSignal = make(chan PkgSong)
-	// radioSignal = make(chan PkgRadio)
+	radioSignal = make(chan PkgRadio)
 	go GlobalPlay(songSignal)
-	// go GlobalRadio(radioSignal)
+	go GlobalRadio(radioSignal)
 }
 
 func Handler(s *discordgo.Session, m *discordgo.MessageCreate, args []string) {
+	setVar(s, m)
+	guildID, err := SearchGuild()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	vInstance := voiceInstances[guildID]
+
 	switch args[0] {
+	case "join":
+		JoinCommand(guildID)
 	case "play":
+		if len(args) == 1 {
+			ResumeCommand(vInstance)
+			return
+		}
+
 		if len(args) != 2 {
 			ChMessageSend(m.ChannelID, "Not found URL")
 			return
 		}
-		PlayCommand(s, m, args[1])
+		PlayCommand(guildID, vInstance, args[1])
+	case "stop":
+		StopCommand(guildID, vInstance)
+	case "pause":
+		PauseCommand(vInstance)
+	case "skip":
+		SkipCommand(vInstance)
 	case "disconnect":
-		DisconnectCommand(s, m)
-	case "join":
-		JoinCommand(s, m)
+		DisconnectCommand(guildID, vInstance)
+	case "radio":
+		RadioCommand(vInstance)
 	}
 }
 
@@ -41,8 +62,12 @@ func ChVoiceJoin(guildID string, vInstance *VoiceInstance) error {
 	vInstance.voice = vConnect
 	return nil
 }
-func SearchGuild(textChannelID string) (guildID string) {
-	channel, _ := session.Channel(textChannelID)
+
+func SearchGuild() (guildID string, err error) {
+	channel, err := session.Channel(message.ChannelID)
+	if err != nil {
+		return
+	}
 	guildID = channel.GuildID
 	return
 }

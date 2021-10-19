@@ -27,7 +27,7 @@ func SlashCommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			content = "Pong!"
 		}
 		s.ChannelMessageSend(m.ChannelID, content)
-	case "play", "disconnect", "join":
+	case "play", "stop", "skip", "pause", "disconnect", "join", "radio":
 		if !isAccessForMusic() {
 			permissionDeniedMessage()
 			return
