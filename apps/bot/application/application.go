@@ -9,7 +9,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/unixoff/discord-bot/config"
 	"github.com/unixoff/discord-bot/context"
-	"github.com/unixoff/discord-bot/handlers"
+	"github.com/unixoff/discord-bot/handler"
 )
 
 type App struct {
@@ -17,7 +17,7 @@ type App struct {
 	config            *config.Config
 	// voiceInstanceList map[string]*VoiceInstance
 
-	handlers []handlers.HandlerInterface
+	handlers []handler.HandlerInterface
 
 	sigs chan os.Signal
 	Quit chan bool
@@ -39,7 +39,7 @@ func (app *App) init() {
 	app.config = config.New()
 	app.ctx.SetConfig(app.config)
 
-	app.addService()
+	app.addHandler()
 }
 
 
