@@ -143,6 +143,7 @@ func (v *VoiceInstance) DCA(url string) {
 	opts.RawOutput = true
 	opts.Bitrate = 96
 	opts.Application = "lowdelay"
+	opts.BufferedFrames = 100
 
 	encodeSession, err := dca.EncodeFile(url, opts)
 	if err != nil {

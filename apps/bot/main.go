@@ -1,63 +1,13 @@
 package main
 
 import (
-	"fmt"
-	"os"
-	"os/signal"
-	"syscall"
-
-	"github.com/bwmarrin/discordgo"
-	"github.com/unixoff/discord-bot/discord"
-	"github.com/unixoff/discord-bot/music"
+	"github.com/unixoff/discord-bot/application"
+	"github.com/unixoff/discord-bot/context"
 )
 
-// Variables used for command line parameters
-var (
-	Token string
-	RoleList []string
-)
-
-type State struct{
-	RoleList []string
-}
 
 func main() {
-	// Create a new Discord session using the provided bot token.
-	dg, err := discordgo.New("Bot " + os.Getenv("TOKEN"))
-	if err != nil {
-		fmt.Println("error creating Discord session,", err)
-		return
-	}
-
-	// Register the messageCreate func as a callback for MessageCreate events.
-	dg.AddHandler(discord.SlashCommandHandler)
-	dg.AddHandler(discord.MessageHandler)
-	// dg.AddHandler(test)
-
-	// In this example, we only care about receiving message events.
-	// dg.Identify.Intents = discordgo.IntentsGuildMessages
-
-	// Open a websocket connection to Discord and begin listening.
-	err = dg.Open()
-	if err != nil {
-		fmt.Println("error opening connection,", err)
-		return
-	}
-
-	_, err = dg.User("@me")
-	if err != nil {
-		// Login unsuccessful
-		fmt.Println("FATA:", err)
-		return
-	} // Login successful
-
-	// Wait here until CTRL-C or other term signal is received.
-	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
-	music.InitRoutine()
-	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
-	<-sc
-
-	// Cleanly close down the Discord session.
-	dg.Close()
+	ctx := context.New()
+	app := application.New(ctx)
+	app.Run()
 }

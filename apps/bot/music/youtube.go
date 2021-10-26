@@ -13,6 +13,11 @@ func youtubeFind(search string, v *VoiceInstance) (pkgSong PkgSong, err error) {
 		User: message.Author.ID,
 	}
 
+	// playlist, _ := client.GetPlaylist(search)
+	// for _, item := range playlist.Videos {
+	// 	log.Println(item)
+	// }
+
 	video, err := client.GetVideo(search)
 	if err != nil {
 		log.Println("Fatal: Youtube get video", err)
@@ -25,6 +30,7 @@ func youtubeFind(search string, v *VoiceInstance) (pkgSong PkgSong, err error) {
 		log.Println("Fatal: Youtube get stream URL", err)
 		return
 	}
+	// log.Println(streamURL)
 
 	song.ID = video.Author
 	song.VideoURL = streamURL

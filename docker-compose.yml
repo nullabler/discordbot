@@ -9,10 +9,10 @@ services:
     volumes:
       - './apps/bot:/app'
     environment:
-      TOKEN: ${TOKEN}
-      ROLE_LIST: ${ROLE_LIST}
-      MUSIC_CHANNEL: ${MUSIC_CHANNEL}
-      TRIGGER: ${TRIGGER}
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      DISCORD_TARGET: ${DISCORD_TARGET}
+      ACCESS_ROLE_LIST: ${ACCESS_ROLE_LIST}
+      MUSIC_CHANNEL_LIST: ${MUSIC_CHANNEL_LIST}
     # depends_on:
       # - mongo
 

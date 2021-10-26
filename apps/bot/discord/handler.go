@@ -15,7 +15,7 @@ func setVar(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 func SlashCommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	setVar(s, m)
-	if m.Author.ID == s.State.User.ID || !strings.HasPrefix(m.Content, os.Getenv("TRIGGER")) || !isAccess() {
+	if m.Author.ID == s.State.User.ID || !strings.HasPrefix(m.Content, os.Getenv("DISCORD_TARGET")) {
 		return
 	}
 
