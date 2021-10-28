@@ -10,8 +10,8 @@ type State struct{
 	session *discordgo.Session
 	message *discordgo.MessageCreate
 	channel *discordgo.Channel
+	voiceConnect *discordgo.VoiceConnection
 	args []string
-	voiceInstance *VoiceInstance
 }
 
 func newState(s *discordgo.Session, m *discordgo.MessageCreate) *State {
@@ -35,4 +35,12 @@ func (self *State) initChannel() (err error) {
 
 	self.channel = channel
 	return
+}
+
+func (self *State) sessionGuilds() []*discordgo.Guild {
+	return self.session.State.Guilds
+}
+
+func (self *State) messageAuth() *discordgo.User {
+	return self.message.Author
 }

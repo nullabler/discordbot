@@ -1,6 +1,7 @@
 package discord
 
 import (
+	"log"
 	"os/exec"
 	"sync"
 
@@ -9,7 +10,9 @@ import (
 )
 
 type VoiceInstance struct {
-	voice      *discordgo.VoiceConnection
+	state *State
+
+	// voice      *discordgo.VoiceConnection
 	session    *discordgo.Session
 	encoder    *dca.EncodeSession
 	stream     *dca.StreamingSession
@@ -26,4 +29,37 @@ type VoiceInstance struct {
 	stop       bool
 	skip       bool
 	radioFlag  bool
+}
+
+func newVoiceInstance(state *State) *VoiceInstance {
+	return &VoiceInstance{
+		state: state,
+	}
+}
+
+func (self *VoiceInstance) JoinToVoice() error {
+	voiceChannelID := self.searchVoiceChannelID()
+	voiceConnect, err := self.state.session.ChannelVoiceJoin(self.state.channel.GuildID, voiceChannelID, false, false)
+	if err != nil {
+		log.Println("Error: channel voice join", err)
+		return err
+	}
+	self.state.voiceConnect = voiceConnect
+	return nil
+}
+
+func (self *VoiceInstance) searchVoiceChannelID() (voiceChannelID string) {
+	for _, guild := range self.state.sessionGuilds() {
+		if guild.ID != self.state.channel.GuildID {
+			continue
+		}
+
+		for _, voiceState := range guild.VoiceStates {
+			if voiceState.UserID == self.state.messageAuth().ID {
+				return voiceState.ChannelID
+			}
+		}
+	}
+
+	return ""
 }

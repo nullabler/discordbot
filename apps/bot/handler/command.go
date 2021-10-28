@@ -35,7 +35,11 @@ func (self *CommandHandler) Run(s *discordgo.Session, m *discordgo.MessageCreate
 		if self.discord.Args()[0] == "ping" {
 			content = "Pong!"
 		}
-		s.ChannelMessageSend(m.ChannelID, content)
+		self.discord.MessageSend(content)
+	case "join":
+		self.discord.JoinToVoice()
+	default:
+		self.discord.MessageSend("Invalid command")
 	// case "play", "stop", "skip", "pause", "disconnect", "join", "radio":
 	// 	if !isAccessForMusic() {
 	// 		permissionDeniedMessage()
