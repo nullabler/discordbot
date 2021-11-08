@@ -5,7 +5,6 @@ import (
 	"github.com/unixoff/discord-bot/context"
 )
 
-
 func main() {
 	ctx := context.New()
 	app := application.New(ctx)

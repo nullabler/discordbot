@@ -6,8 +6,10 @@ import (
 	"github.com/unixoff/discord-bot/config"
 )
 
+type typeConst string
+
 const (
-	CONFIG_COMPONENT_KEY = "config.component"
+	CONFIG_COMPONENT_KEY typeConst = "config.component"
 )
 
 type Context struct {
@@ -20,10 +22,10 @@ func New() *Context {
 	}
 }
 
-func (self *Context) SetConfig(config *config.Config) {
-	self.ctx = context.WithValue(self.ctx, CONFIG_COMPONENT_KEY, config)
+func (c *Context) SetConfig(config *config.Config) {
+	c.ctx = context.WithValue(c.ctx, CONFIG_COMPONENT_KEY, config)
 }
 
-func (self *Context) Config() *config.Config {
-	return self.ctx.Value(CONFIG_COMPONENT_KEY).(*config.Config)
+func (c *Context) Config() *config.Config {
+	return c.ctx.Value(CONFIG_COMPONENT_KEY).(*config.Config)
 }

@@ -13,8 +13,8 @@ import (
 )
 
 type App struct {
-	ctx               *context.Context
-	config            *config.Config
+	ctx    *context.Context
+	config *config.Config
 	// voiceInstanceList map[string]*VoiceInstance
 
 	handlers []handler.HandlerInterface
@@ -25,7 +25,7 @@ type App struct {
 
 func New(ctx *context.Context) *App {
 	app := &App{
-		ctx: ctx,
+		ctx:  ctx,
 		sigs: make(chan os.Signal, 1),
 		Quit: make(chan bool, 1),
 	}
@@ -42,9 +42,8 @@ func (app *App) init() {
 	app.addHandler()
 }
 
-
 func (app *App) Run() {
-	signal.Notify(app.sigs, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+	signal.Notify(app.sigs, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	go func() {
 		<-app.sigs
 		app.Quit <- true

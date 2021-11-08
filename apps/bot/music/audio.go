@@ -1,10 +1,11 @@
 package music
 
 import (
-	"github.com/jonas747/dca"
 	"io"
 	"log"
 	"time"
+
+	"github.com/jonas747/dca"
 )
 
 const (
@@ -92,9 +93,9 @@ func (v *VoiceInstance) PlayQueue(song Song) {
 			go ChMessageSend(v.nowPlaying.ChannelID, "[**Music**] Playing, **`"+
 				v.nowPlaying.Title+"`  -  `("+v.nowPlaying.Duration+")`  -  **<@"+v.nowPlaying.ID+">\n") //*`"+ v.nowPlaying.User +"`***")
 			// If monoserver
-			if o.DiscordPlayStatus {
-				// dg.UpdateStatus(0, v.nowPlaying.Title)
-			}
+			//if o.DiscordPlayStatus {
+			// dg.UpdateStatus(0, v.nowPlaying.Title)
+			//}
 			v.stop = false
 			v.skip = false
 			v.speaking = true
@@ -119,9 +120,9 @@ func (v *VoiceInstance) PlayQueue(song Song) {
 func (v *VoiceInstance) Radio(url string) {
 	v.audioMutex.Lock()
 	defer v.audioMutex.Unlock()
-	if o.DiscordPlayStatus {
-		// dg.UpdateStatus(0, "Radio")
-	}
+	//if o.DiscordPlayStatus {
+	// dg.UpdateStatus(0, "Radio")
+	//}
 	v.radioFlag = true
 	v.stop = false
 	v.speaking = true
