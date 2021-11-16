@@ -7,9 +7,13 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/unixoff/discord-bot/config"
+	"github.com/unixoff/discord-bot/context"
 )
 
 type Discord struct {
+	indexInvalidCommand  int
+	config               *config.Config
 	state                *State
 	voiceInstanceList    map[string]*VoiceInstance
 	mutex                sync.Mutex
@@ -18,15 +22,21 @@ type Discord struct {
 	songSignal           chan PkgSong
 }
 
-func New() *Discord {
+func New(ctx *context.Context) *Discord {
 	return &Discord{
-		voiceInstanceList: make(map[string]*VoiceInstance),
-		youtube:           newYoutube(),
-		songSignal:        make(chan PkgSong),
+		config:              ctx.Config(),
+		voiceInstanceList:   make(map[string]*VoiceInstance),
+		youtube:             newYoutube(),
+		songSignal:          make(chan PkgSong),
+		indexInvalidCommand: 0,
 	}
 }
 
 func (discord *Discord) Init(s *discordgo.Session, m *discordgo.MessageCreate) bool {
+	if m.Author.Bot {
+		return false
+	}
+
 	discord.state = newState(s, m)
 	discord.youtube.init(discord.state)
 	if err := discord.state.init(); err != nil {
@@ -34,11 +44,11 @@ func (discord *Discord) Init(s *discordgo.Session, m *discordgo.MessageCreate) b
 		return false
 	}
 
-	go discord.globalPlayMusic()
-
 	if vInstance, ok := discord.voiceInstanceList[discord.state.channel.GuildID]; ok {
 		discord.currentVoiceInstance = vInstance
 	}
+
+	go discord.globalPlayMusic()
 
 	return m.Author.ID != s.State.User.ID
 }
@@ -60,6 +70,10 @@ func (discord *Discord) MessageSend(content string) {
 }
 
 func (discord *Discord) JoinToVoice() {
+	if !discord.isAccessForMusic() {
+		return
+	}
+
 	if discord.currentVoiceInstance == nil {
 		discord.mutex.Lock()
 		discord.currentVoiceInstance = newVoiceInstance(discord.state)
@@ -71,6 +85,10 @@ func (discord *Discord) JoinToVoice() {
 }
 
 func (discord *Discord) PlayMusic() {
+	if !discord.isAccessForMusic() {
+		return
+	}
+
 	if discord.currentVoiceInstance == nil {
 		discord.JoinToVoice()
 	} else {
@@ -92,6 +110,10 @@ func (discord *Discord) PlayMusic() {
 }
 
 func (discord *Discord) PauseMusic() {
+	if !discord.isAccessForMusic() {
+		return
+	}
+
 	if discord.currentVoiceInstance == nil {
 		log.Println("INFO: The bot is not joined in a voice channel")
 		return
@@ -109,6 +131,10 @@ func (discord *Discord) PauseMusic() {
 }
 
 func (discord *Discord) ResumeMusic() {
+	if !discord.isAccessForMusic() {
+		return
+	}
+
 	if discord.currentVoiceInstance == nil {
 		log.Println("The bot is not joined in a voice channel")
 		return
@@ -126,6 +152,10 @@ func (discord *Discord) ResumeMusic() {
 }
 
 func (discord *Discord) SkipMusic() {
+	if !discord.isAccessForMusic() {
+		return
+	}
+
 	if discord.currentVoiceInstance == nil {
 		log.Println("INFO: The bot is not joined in a voice channel")
 		discord.MessageSend("I need join in a voice channel!")
@@ -144,7 +174,7 @@ func (discord *Discord) SkipMusic() {
 }
 
 func (discord *Discord) StopMusic() {
-	if discord.currentVoiceInstance == nil {
+	if !discord.isAccessForMusic() || discord.currentVoiceInstance == nil {
 		return
 	}
 
@@ -158,7 +188,7 @@ func (discord *Discord) StopMusic() {
 }
 
 func (discord *Discord) DisconnectMusic() {
-	if discord.currentVoiceInstance == nil {
+	if !discord.isAccessForMusic() || discord.currentVoiceInstance == nil {
 		return
 	}
 
@@ -170,6 +200,21 @@ func (discord *Discord) DisconnectMusic() {
 	discord.mutex.Lock()
 	delete(discord.voiceInstanceList, discord.state.channel.GuildID)
 	discord.mutex.Unlock()
+}
+
+func (discord *Discord) InvalidCommand() {
+	switch discord.indexInvalidCommand {
+	case 0:
+		discord.AddEmojiReaction("🙉")
+	case 1:
+		discord.AddEmojiReaction("🙈")
+	default:
+		discord.AddEmojiReaction("🙊")
+	}
+	discord.indexInvalidCommand++
+	if discord.indexInvalidCommand > 2 {
+		discord.indexInvalidCommand = 0
+	}
 }
 
 func (discord *Discord) globalPlayMusic() {
@@ -185,4 +230,15 @@ func (discord *Discord) globalPlayMusic() {
 			go song.v.PlayQueue(song.data)
 		}
 	}
+}
+
+func (discord *Discord) isAccessForMusic() bool {
+	for _, channelID := range discord.config.MusicChannelList {
+		if channelID == discord.state.message.ChannelID {
+			return true
+		}
+	}
+
+	discord.AddEmojiReaction("🚫")
+	return false
 }

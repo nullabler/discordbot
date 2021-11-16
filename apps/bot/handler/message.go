@@ -14,7 +14,7 @@ type MessageHandler struct {
 func NewMessageHandler(ctx *context.Context) *MessageHandler {
 	return &MessageHandler{
 		ctx:     ctx,
-		discord: discord.New(),
+		discord: discord.New(ctx),
 	}
 }
 

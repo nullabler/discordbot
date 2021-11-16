@@ -19,7 +19,7 @@ func NewCommandHandler(ctx *context.Context) *CommandHandler {
 	return &CommandHandler{
 		ctx:     ctx,
 		config:  ctx.Config(),
-		discord: discord.New(),
+		discord: discord.New(ctx),
 	}
 }
 
@@ -51,21 +51,6 @@ func (handler *CommandHandler) Run(s *discordgo.Session, m *discordgo.MessageCre
 	case "disconnect":
 		handler.discord.DisconnectMusic()
 	default:
-		handler.discord.MessageSend("Invalid command")
-		// case "play", "stop", "skip", "pause", "disconnect", "join", "radio":
-		// 	if !isAccessForMusic() {
-		// 		permissionDeniedMessage()
-		// 		return
-		// 	}
-		// 	music.Handler(s, m, args)
-		// case "help":
-		// 	if len(args) > 1 {
-		// 		helpCommand(s, m, args[1])
-		// 	} else {
-		// 		helpCommand(s, m, "")
-		// 	}
-		// default:
-		// 	s.ChannelMessageSend(m.ChannelID, errorMessage("Invalid command", "For a list of help topics, type !help"))
-		// }
+		handler.discord.InvalidCommand()
 	}
 }
