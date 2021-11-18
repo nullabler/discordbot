@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  discordbot:
+    build:
+      context: ../../.
+      dockerfile: build/docker/dev/Dockerfile
+    working_dir: /app
+    volumes:
+      - '../.:/app'
+    environment:
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      DISCORD_TARGET: ${DISCORD_TARGET}
+      ACCESS_ROLE_LIST: ${ACCESS_ROLE_LIST}
+      MUSIC_CHANNEL_LIST: ${MUSIC_CHANNEL_LIST}
