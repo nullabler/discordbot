@@ -1,4 +1,4 @@
-module github.com/unixoff/discord-bot
+module github.com/unixoff/discordbot
 
 go 1.17
 

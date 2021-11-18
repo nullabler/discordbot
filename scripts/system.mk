@@ -1,13 +1,13 @@
 ##@ System:
 
 up: ## start project
-	docker-compose up -d
+	docker-compose --env-file configs/.env -f deploy/docker-compose.yml up -d
 
 down: ## stop project
 	docker-compose down
 
 watch: ## watch project
-	docker-compose up
+	docker-compose --env-file configs/.env -f deploy/docker-compose.yml up 
 
 state: ## show state
 	docker-compose ps

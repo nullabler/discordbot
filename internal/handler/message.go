@@ -2,8 +2,8 @@ package handler
 
 import (
 	"github.com/bwmarrin/discordgo"
-	"github.com/unixoff/discord-bot/context"
-	"github.com/unixoff/discord-bot/discord"
+	"github.com/unixoff/discordbot/internal/context"
+	"github.com/unixoff/discordbot/internal/discord"
 )
 
 type MessageHandler struct {

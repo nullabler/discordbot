@@ -3,7 +3,7 @@ package context
 import (
 	"context"
 
-	"github.com/unixoff/discord-bot/config"
+	"github.com/unixoff/discordbot/internal/config"
 )
 
 type typeConst string

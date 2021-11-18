@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/unixoff/discord-bot/config"
-	"github.com/unixoff/discord-bot/context"
+	"github.com/unixoff/discordbot/internal/config"
+	"github.com/unixoff/discordbot/internal/context"
 )
 
 type Discord struct {

@@ -1,7 +1,12 @@
 package main
 
-import "log"
+import (
+	"github.com/unixoff/discordbot/internal/application"
+	"github.com/unixoff/discordbot/internal/context"
+)
 
 func main() {
-	log.Println("qweqweqweqwe")
+	ctx := context.New()
+	app := application.New(ctx)
+	app.Run()
 }

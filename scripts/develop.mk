@@ -1,7 +1,4 @@
 ##@ Develop:
 
-bot: ## start shell in backend
-	docker-compose exec bot sh
-
-mongo: ## connect for db
-	docker-compose exec mongo mongosh
+sh: ## start shell in backend
+	docker-compose --env-file configs/.env -f deploy/docker-compose.yml exec discordbot sh

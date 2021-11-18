@@ -3,9 +3,9 @@ FROM golang:1.17.2-alpine3.14
 RUN apk update && apk add git ffmpeg ca-certificates && update-ca-certificates
 
 WORKDIR /app
-COPY apps/bot/ /app
+COPY . /app
 
 RUN go mod download
 RUN go get github.com/githubnemo/CompileDaemon
 
-ENTRYPOINT CompileDaemon --build="go build -o main ." --command="./main"
+ENTRYPOINT CompileDaemon --build="go build -o cmd/discordbot/main cmd/discordbot/main.go" --command="./cmd/discordbot/main"

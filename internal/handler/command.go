@@ -4,9 +4,9 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/unixoff/discord-bot/config"
-	"github.com/unixoff/discord-bot/context"
-	"github.com/unixoff/discord-bot/discord"
+	"github.com/unixoff/discordbot/internal/config"
+	"github.com/unixoff/discordbot/internal/context"
+	"github.com/unixoff/discordbot/internal/discord"
 )
 
 type CommandHandler struct {
