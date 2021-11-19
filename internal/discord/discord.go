@@ -33,7 +33,7 @@ func New(ctx *context.Context) *Discord {
 }
 
 func (discord *Discord) Init(s *discordgo.Session, m *discordgo.MessageCreate) bool {
-	if m.Author.Bot {
+	if m.Author.Bot || len(m.Attachments) > 0 {
 		return false
 	}
 
