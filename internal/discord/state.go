@@ -1,6 +1,7 @@
 package discord
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -21,6 +22,10 @@ func newState(s *discordgo.Session, m *discordgo.MessageCreate) *State {
 }
 
 func (state *State) init() error {
+	if len(state.message.Content) == 0 {
+		return errors.New("messame.Content is empty")
+	}
+
 	state.args = strings.Split(state.message.Content[1:], " ")
 	return state.initChannel()
 }
