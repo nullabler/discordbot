@@ -7,6 +7,7 @@ import (
 	"github.com/unixoff/discordbot/internal/config"
 	"github.com/unixoff/discordbot/internal/context"
 	"github.com/unixoff/discordbot/internal/discord"
+	"github.com/unixoff/discordbot/internal/parse"
 )
 
 type CommandHandler struct {
@@ -31,9 +32,9 @@ func (handler *CommandHandler) Run(s *discordgo.Session, m *discordgo.MessageCre
 
 	switch handler.discord.Args()[0] {
 	case "ping", "pong":
-		content := "Ping!"
+		content := "ping!"
 		if handler.discord.Args()[0] == "ping" {
-			content = "Pong!"
+			content = "pong!"
 		}
 		handler.discord.MessageSend(content)
 	case "join":
@@ -50,6 +51,8 @@ func (handler *CommandHandler) Run(s *discordgo.Session, m *discordgo.MessageCre
 		handler.discord.StopMusic()
 	case "disconnect":
 		handler.discord.DisconnectMusic()
+	case "ver", "-v", "version":
+		parse.Route(handler.discord)
 	default:
 		handler.discord.InvalidCommand()
 	}

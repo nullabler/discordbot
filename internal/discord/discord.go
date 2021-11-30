@@ -202,6 +202,10 @@ func (discord *Discord) DisconnectMusic() {
 	discord.mutex.Unlock()
 }
 
+func (discord *Discord) HasChannelID(channelID string) bool {
+	return discord.state.message.ChannelID == channelID
+}
+
 func (discord *Discord) InvalidCommand() {
 	switch discord.indexInvalidCommand {
 	case 0:
