@@ -2,19 +2,19 @@ package handler
 
 import (
 	"github.com/bwmarrin/discordgo"
-	"github.com/unixoff/discordbot/internal/context"
+	"github.com/unixoff/discordbot/internal/config"
 	"github.com/unixoff/discordbot/internal/discord"
 )
 
 type MessageHandler struct {
-	ctx     *context.Context
+	conf *config.Config
 	discord *discord.Discord
 }
 
-func NewMessageHandler(ctx *context.Context) *MessageHandler {
+func NewMessageHandler(conf *config.Config) *MessageHandler {
 	return &MessageHandler{
-		ctx:     ctx,
-		discord: discord.New(ctx),
+		conf:     conf,
+		discord: discord.New(conf),
 	}
 }
 

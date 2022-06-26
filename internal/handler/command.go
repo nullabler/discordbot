@@ -5,22 +5,19 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/unixoff/discordbot/internal/config"
-	"github.com/unixoff/discordbot/internal/context"
 	"github.com/unixoff/discordbot/internal/discord"
 	"github.com/unixoff/discordbot/internal/parse"
 )
 
 type CommandHandler struct {
-	ctx     *context.Context
 	config  *config.Config
 	discord *discord.Discord
 }
 
-func NewCommandHandler(ctx *context.Context) *CommandHandler {
+func NewCommandHandler(conf *config.Config) *CommandHandler {
 	return &CommandHandler{
-		ctx:     ctx,
-		config:  ctx.Config(),
-		discord: discord.New(ctx),
+		config:  conf,
+		discord: discord.New(conf),
 	}
 }
 
@@ -37,20 +34,6 @@ func (handler *CommandHandler) Run(s *discordgo.Session, m *discordgo.MessageCre
 			content = "pong!"
 		}
 		handler.discord.MessageSend(content)
-	case "join":
-		handler.discord.JoinToVoice()
-	case "play":
-		handler.discord.PlayMusic()
-	case "pause":
-		handler.discord.PauseMusic()
-	case "resume":
-		handler.discord.ResumeMusic()
-	case "skip":
-		handler.discord.SkipMusic()
-	case "stop":
-		handler.discord.StopMusic()
-	case "disconnect":
-		handler.discord.DisconnectMusic()
 	case "ver", "-v", "version":
 		parse.Route(handler.discord)
 	default:

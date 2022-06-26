@@ -8,46 +8,28 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/unixoff/discordbot/internal/config"
-	"github.com/unixoff/discordbot/internal/context"
 	"github.com/unixoff/discordbot/internal/handler"
 )
 
 type App struct {
-	ctx    *context.Context
 	config *config.Config
-	// voiceInstanceList map[string]*VoiceInstance
-
 	handlers []handler.HandlerInterface
-
-	sigs chan os.Signal
-	Quit chan bool
+	signal chan os.Signal
 }
 
-func New(ctx *context.Context) *App {
+func New() *App {
 	app := &App{
-		ctx:  ctx,
-		sigs: make(chan os.Signal, 1),
-		Quit: make(chan bool, 1),
+		config: config.New(),
+		signal: make(chan os.Signal, 1),
 	}
 
-	app.init()
+	app.addHandler()
 
 	return app
 }
 
-func (app *App) init() {
-	app.config = config.New()
-	app.ctx.SetConfig(app.config)
-
-	app.addHandler()
-}
-
 func (app *App) Run() {
-	signal.Notify(app.sigs, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
-	//go func() {
-		//<-app.sigs
-		//app.Quit <- true
-	//}()
+	signal.Notify(app.signal, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 
 	discordSession, err := discordgo.New("Bot " + app.config.DiscordToken)
 	if err != nil {
@@ -73,6 +55,6 @@ func (app *App) Run() {
 
 	log.Println("Bot is now running.  Press CTRL-C to exit.")
 
-	<-app.Quit
+	<-app.signal
 	discordSession.Close()
 }
