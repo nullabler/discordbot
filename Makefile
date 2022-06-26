@@ -4,5 +4,5 @@ ARGS = $(filter-out $@,$(MAKECMDGOALS))
 
 .default: help
 
-include scripts/*/*.mk
-include scripts/*.mk
+include .build/.mk/*/*.mk
+include .build/.mk/*.mk

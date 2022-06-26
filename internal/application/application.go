@@ -44,10 +44,10 @@ func (app *App) init() {
 
 func (app *App) Run() {
 	signal.Notify(app.sigs, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
-	go func() {
-		<-app.sigs
-		app.Quit <- true
-	}()
+	//go func() {
+		//<-app.sigs
+		//app.Quit <- true
+	//}()
 
 	discordSession, err := discordgo.New("Bot " + app.config.DiscordToken)
 	if err != nil {
